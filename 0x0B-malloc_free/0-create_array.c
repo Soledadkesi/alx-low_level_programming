@@ -1,12 +1,11 @@
 #include "main.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 /**
  * main - creates an array of chars
  * and initializes it with a specific char
  * @size: array size
- * @c: char to assign
+ * @c: char to keep
  * Description: create array of size and assign char c
  * Return: pointer to array, if failed NULL
  */
