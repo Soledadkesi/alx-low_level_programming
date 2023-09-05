@@ -36,4 +36,4 @@ int main(int argc, char **argv)
 	}
 	printf("%i\n", mncoin);
 	return (0);
-}	
+}
