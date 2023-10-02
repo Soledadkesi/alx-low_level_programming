@@ -24,6 +24,7 @@ void close_elf(int elf);
 void check_elf(unsigned char *e_ident)
 {
 	int index;
+
 	for (index = 0; index < 4; index++)
 	{
 		if (e_ident[index] != 127 &&
@@ -39,12 +40,12 @@ void check_elf(unsigned char *e_ident)
 /**
  * print_magic - Prints the magic numbers of an ELF header.
  * @e_ident: A pointer to an array containing the ELF magic numbers.
- *
  * Description: Magic numbers are separated by spaces.
  */
 void print_magic(unsigned char *e_ident)
 {
 	int index;
+
 	printf("  Magic:   ");
 	for (index = 0; index < EI_NIDENT; index++)
 	{
@@ -245,6 +246,7 @@ void close_elf(int elf)
 int main(int __attribute__((__unused__)) argc, char *argv[])
 {
 	Elf64_Ehdr *header;
+
 	int o, r;
 	o = open(argv[1], O_RDONLY);
 	if (o == -1)
