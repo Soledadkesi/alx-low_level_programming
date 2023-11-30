@@ -1,88 +1,54 @@
 #include "hash_tables.h"
 
 /**
- * create_item - create a hash item
- * @key: key
- * @value: value
- * Return: pointer to item
+ * hash_table_set - Add or update an element in a hash table.
+ * @ht: A pointer to the hash table.
+ * @key: The key to add - cannot be an empty string.
+ * @value: The value associated with key.
+ *
+ * Return: Upon failure - 0.
+ *         Otherwise - 1.
  */
-hash_node_t *create_item(const char *key, const char *value)
-{
-	/* create new item */
-	hash_node_t *item = malloc(sizeof(hash_node_t));
 
-	/* allocate space for item values */
-	item->key = malloc(strlen(key) + 1);
-	item->value = malloc(strlen(value) + 1);
-
-	/* set item values */
-	strcpy(item->key, key);
-	strcpy(item->value, value);
-
-	/* return the created item */
-	return (item);
-}
-
-/**
- * hash_table_set - function that adds an element to the hash table.
- * @ht: the table
- * @key: the key
- * @value: the value of the key
- * Return: 1 (success) or 0 (failure)
- */
 int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
-	hash_node_t *item = NULL;
-	hash_node_t *current_item = NULL;
-	int index;
+	hash_node_t *new;
+	char *value_copy;
+	unsigned long int index, i;
 
-	if (strlen(key) <= 0)
+	if (ht == NULL || key == NULL || *key == '\0' || value == NULL)
 		return (0);
 
-	/* create the item */
-	item = create_item(key, value);
+	value_copy = strdup(value);
+	if (value_copy == NULL)
+		return (0);
 
-	/* fetch the index at which this item will be according to hash function */
-	index = hash_djb2((const unsigned char *)key) % 1024;
-
-	/* check if element at that index is NULL */
-	current_item = ht->array[index];
-	if (current_item == NULL) /* there is no element there */
-		ht->array[index] = item; /* insert new item */
-	else /* if the index contains an element already */
+	index = key_index((const unsigned char *)key, ht->size);
+	for (i = index; ht->array[i]; i++)
 	{
-		if (strcmp(key, current_item->key) == 0)
+		if (strcmp(ht->array[i]->key, key) == 0)
 		{
-			/* if both keys are the same, then just update the value */
-			strcpy(ht->array[index]->value, value);
+			free(ht->array[i]->value);
+			ht->array[i]->value = value_copy;
 			return (1);
 		}
-
-		/* if the keys are not the same, then a collision has happened */
-		handle_collision(ht, item, index);
 	}
-	return (1);
-}
 
-
-/**
- * handle_collision - self explanatory
- * @table: the table
- * @item: the item we want to add to the table
- * @index: the index at which collision occurred
- * Return: nothing
- */
-void handle_collision(hash_table_t *table, hash_node_t *item, int index)
-{
-	hash_node_t *current_item = table->array[index];
-
-	/* check if there is really a collision */
-	if (current_item == NULL)
-		table->array[index] = item;
-	else /* if there is a collision, a linked list is about to start */
+	new = malloc(sizeof(hash_node_t));
+	if (new == NULL)
 	{
-		/* add item to the beginning of linked list */
-		item->next = current_item;
-		table->array[index] = item;
+		free(value_copy);
+		return (0);
 	}
+	new->key = strdup(key);
+	if (new->key == NULL)
+	{
+		free(new);
+		return (0);
+	}
+	new->value = value_copy;
+	new->next = ht->array[index];
+	ht->array[index] = new;
+
+	return (1);
 }
