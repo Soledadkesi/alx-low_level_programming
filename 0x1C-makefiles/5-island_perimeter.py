@@ -1,16 +1,21 @@
 #!/usr/bin/python3
 """
-This module defines the function island_perimeter()
+Module gett Island Perimeter
 """
 
 
 def island_perimeter(grid):
-    """This function return the perimeter of the island
-    args:
-        grid(list): list of list as grid
-    """
-    num_row = 0
-    for row in grid:
-        num_row += 1
-    num_column = len(grid[0])
-    return (num_row - 2) * (num_column - 2)
+    """ Calculatee perimeter of grid where "1" is found"""
+    p = 0
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] == 1:
+                if row == 0 or grid[row - 1][col] == 0:
+                    p += 1  # top-side
+                if row == (len(grid) - 1) or grid[row + 1][col] == 0:
+                    p += 1  # bottom-side
+                if col == 0 or grid[row][col - 1] == 0:
+                    p += 1  # left-side
+                if col == (len(grid[0]) - 1) or grid[row][col + 1] == 0:
+                    p += 1  # right-side
+    return p
